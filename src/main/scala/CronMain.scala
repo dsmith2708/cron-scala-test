@@ -26,7 +26,7 @@ object CronMain {
       configRecord match {
         case x if x(2) == "/bin/run_me_daily" => {
           val timeToRunToday = Calendar.getInstance()
-          timeToRunToday.set(Calendar.HOUR, x(1).toInt)
+          timeToRunToday.set(Calendar.HOUR_OF_DAY, x(1).toInt)
           timeToRunToday.set(Calendar.MINUTE, x(0).toInt)
           if(timeToRunToday.before(curCalendar)) {
             timeToRunToday.add(Calendar.DAY_OF_MONTH, 1)
@@ -52,12 +52,28 @@ object CronMain {
 
         }
         case x if x(2) == "/bin/run_every_minute" => {
-          println("run every minute")
+          val timeOfNextRun: Calendar = curCalendar.clone().asInstanceOf[Calendar]
+          timeOfNextRun.add(Calendar.MINUTE, 1)
+          if(timeOfNextRun.get(Calendar.DAY_OF_MONTH) == curCalendar.get(Calendar.DAY_OF_MONTH)) {
+            println(s"${timeOfNextRun.get(Calendar.HOUR_OF_DAY)}:${timeOfNextRun.get(Calendar.MINUTE)} Today - ${configRecord(2)}")
+          } else {
+            println(s"${timeOfNextRun.get(Calendar.HOUR_OF_DAY)}:${timeOfNextRun.get(Calendar.MINUTE)} Tomorrow - ${configRecord(2)}")
+          }
         }
         case x if x(2) == "/bin/run_me_sixty_times" => {
           println("run 60 times at specified time")
+          val timeToRunToday = Calendar.getInstance()
+          timeToRunToday.set(Calendar.HOUR_OF_DAY, x(1).toInt)
+          timeToRunToday.set(Calendar.MINUTE, 0)
+          if(timeToRunToday.before(curCalendar)) {
+            timeToRunToday.add(Calendar.DAY_OF_MONTH, 1)
+            println(s"${timeToRunToday.get(Calendar.HOUR_OF_DAY)}:${timeToRunToday.get(Calendar.MINUTE)} Tomorrow - ${configRecord(2)}")
+          } else {
+            timeToRunToday.add(Calendar.DAY_OF_MONTH, 1)
+            println(s"${timeToRunToday.get(Calendar.HOUR_OF_DAY)}:${timeToRunToday.get(Calendar.MINUTE)} Today - ${configRecord(2)}")
+          }
         }
-        case _ => println("error")
+        case _ => println("error, specified script in bin not recognised")
       }
   }
 
