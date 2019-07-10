@@ -26,7 +26,6 @@ object CronMain {
       configRecord match {
         case x if x(2) == "/bin/run_me_daily" => {
           val timeToRunToday = Calendar.getInstance()
-
           timeToRunToday.set(Calendar.HOUR, x(1).toInt)
           timeToRunToday.set(Calendar.MINUTE, x(0).toInt)
           if(timeToRunToday.before(curCalendar)) {
@@ -39,6 +38,18 @@ object CronMain {
         }
         case x if x(2) == "/bin/run_me_hourly" => {
           val timeOfNextRun = Calendar.getInstance()
+          timeOfNextRun.set(Calendar.MINUTE, x(0).toInt)
+          if(timeOfNextRun.before(curCalendar)) {
+            timeOfNextRun.add(Calendar.HOUR_OF_DAY, 1)
+            if(timeOfNextRun.get(Calendar.DAY_OF_MONTH) == curCalendar.get(Calendar.DAY_OF_MONTH)) {
+              println(s"${timeOfNextRun.get(Calendar.HOUR_OF_DAY)}:${timeOfNextRun.get(Calendar.MINUTE)} Today - ${configRecord(2)}")
+            } else {
+              println(s"${timeOfNextRun.get(Calendar.HOUR_OF_DAY)}:${timeOfNextRun.get(Calendar.MINUTE)} Tomorrow - ${configRecord(2)}")
+            }
+          } else {
+            println(s"${timeOfNextRun.get(Calendar.HOUR_OF_DAY)}:${timeOfNextRun.get(Calendar.MINUTE)} Today - ${configRecord(2)}")
+          }
+
         }
         case x if x(2) == "/bin/run_every_minute" => {
           println("run every minute")
