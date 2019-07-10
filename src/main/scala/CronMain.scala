@@ -5,7 +5,6 @@ import scala.io.{BufferedSource, Source}
 
 object CronMain {
 
-
   def getHourMinuteFromConsole(firstArg: String): Array[Int] = {
       firstArg.split(":").map( stringVal => if(stringVal== "*") 100 else stringVal.toInt)
   }
@@ -85,14 +84,7 @@ object CronMain {
     if(curHourMinute(0) != 100) curCalendar.set(Calendar.HOUR_OF_DAY, curHourMinute(0))
     if(curHourMinute(1) != 100) curCalendar.set(Calendar.MINUTE, curHourMinute(1))
 
-
-    println(curCalendar.getTime)
-
-
     splitRecordsAndOutput(getFile(args(1)).getLines.toList, curCalendar)
-
-
-
   }
 
 }
