@@ -1,11 +1,17 @@
 import java.text.SimpleDateFormat
 import java.util.{Calendar, Date}
 
+import scala.io.{BufferedSource, Source}
+
 object CronMain {
 
 
   def getHourMinuteFromConsole(firstArg: String): Array[Int] = {
       firstArg.split(":").map( stringVal => if(stringVal== "*") 100 else stringVal.toInt)
+  }
+
+  def getFile(fileName: String): BufferedSource = {
+    Source.fromFile(fileName)
   }
 
   def main(args: Array[String]): Unit = {
@@ -18,7 +24,7 @@ object CronMain {
     if(curHourMinute(0) != 100) curCalendar.set(Calendar.HOUR, curHourMinute(0))
     if(curHourMinute(1) != 100) curCalendar.set(Calendar.MINUTE, curHourMinute(1))
 
-
+    val configFile = getFile(args(1)).getLines.toList
 
 
 
