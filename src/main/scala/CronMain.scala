@@ -14,21 +14,31 @@ object CronMain {
     Source.fromFile(fileName)
   }
 
-  def splitRecordsAndOutput(configFileRecords: List[String]): Unit = {
+  def splitRecordsAndOutput(configFileRecords: List[String], curCalendar: Calendar): Unit = {
     configFileRecords.foreach(record => {
       println("ITEMM")
       val splitRecord = record.split(" ")
-      outputWhenNextRun(splitRecord)
+      outputWhenNextRun(splitRecord, curCalendar)
     })
   }
 
-  def outputWhenNextRun(configRecord: Array[String]): Unit = {
+  def outputWhenNextRun(configRecord: Array[String], curCalendar: Calendar): Unit = {
       configRecord match {
         case x if x(2) == "/bin/run_me_daily" => {
-          println("run daily")
+          val timeToRunToday = Calendar.getInstance()
+
+          timeToRunToday.set(Calendar.HOUR, x(1).toInt)
+          timeToRunToday.set(Calendar.MINUTE, x(0).toInt)
+          if(timeToRunToday.before(curCalendar)) {
+            timeToRunToday.add(Calendar.DAY_OF_MONTH, 1)
+            println(s"${timeToRunToday.get(Calendar.HOUR_OF_DAY)}:${timeToRunToday.get(Calendar.MINUTE)} Tomorrow - ${configRecord(2)}")
+          } else {
+            timeToRunToday.add(Calendar.DAY_OF_MONTH, 1)
+            println(s"${timeToRunToday.get(Calendar.HOUR_OF_DAY)}:${timeToRunToday.get(Calendar.MINUTE)} Today - ${configRecord(2)}")
+          }
         }
         case x if x(2) == "/bin/run_me_hourly" => {
-          println("run hourly")
+          val timeOfNextRun = Calendar.getInstance()
         }
         case x if x(2) == "/bin/run_every_minute" => {
           println("run every minute")
@@ -45,10 +55,14 @@ object CronMain {
 
     val curHourMinute = getHourMinuteFromConsole(args(0))
     val curCalendar = Calendar.getInstance()
-    if(curHourMinute(0) != 100) curCalendar.set(Calendar.HOUR, curHourMinute(0))
+    if(curHourMinute(0) != 100) curCalendar.set(Calendar.HOUR_OF_DAY, curHourMinute(0))
     if(curHourMinute(1) != 100) curCalendar.set(Calendar.MINUTE, curHourMinute(1))
 
-    splitRecordsAndOutput(getFile(args(1)).getLines.toList)
+
+    println(curCalendar.getTime)
+
+
+    splitRecordsAndOutput(getFile(args(1)).getLines.toList, curCalendar)
 
 
 
