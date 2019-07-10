@@ -15,7 +15,6 @@ object CronMain {
 
   def splitRecordsAndOutput(configFileRecords: List[String], curCalendar: Calendar): Unit = {
     configFileRecords.foreach(record => {
-      println("ITEMM")
       val splitRecord = record.split(" ")
       outputWhenNextRun(splitRecord, curCalendar)
     })
@@ -60,16 +59,15 @@ object CronMain {
           }
         }
         case x if x(2) == "/bin/run_me_sixty_times" => {
-          println("run 60 times at specified time")
           val timeToRunToday = Calendar.getInstance()
           timeToRunToday.set(Calendar.HOUR_OF_DAY, x(1).toInt)
           timeToRunToday.set(Calendar.MINUTE, 0)
           if(timeToRunToday.before(curCalendar)) {
             timeToRunToday.add(Calendar.DAY_OF_MONTH, 1)
-            println(s"${timeToRunToday.get(Calendar.HOUR_OF_DAY)}:${timeToRunToday.get(Calendar.MINUTE)} Tomorrow - ${configRecord(2)}")
+            println(String.format("%02d:%02d", timeToRunToday.get(Calendar.HOUR_OF_DAY), timeToRunToday.get(Calendar.MINUTE)) + " Tomorrow - " + configRecord(2))
           } else {
             timeToRunToday.add(Calendar.DAY_OF_MONTH, 1)
-            println(s"${timeToRunToday.get(Calendar.HOUR_OF_DAY)}:${timeToRunToday.get(Calendar.MINUTE)} Today - ${configRecord(2)}")
+            println(String.format("%02d:%02d", timeToRunToday.get(Calendar.HOUR_OF_DAY), timeToRunToday.get(Calendar.MINUTE)) + " Today - " + configRecord(2))
           }
         }
         case _ => println("error, specified script in bin not recognised")
