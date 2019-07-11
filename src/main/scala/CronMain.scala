@@ -74,7 +74,6 @@ object CronMain {
       }
   }
 
-
   def main(args: Array[String]): Unit = {
 
     val curHourMinute = getHourMinuteFromConsole(args(0))
